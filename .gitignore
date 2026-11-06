@@ -1,0 +1,14 @@
+# Secrets : seuls les fichiers modèles sont commités
+.env
+.env.*
+!.env.example
+secrets.h
+
+# Dépendances
+node_modules/
+
+# Système et éditeurs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
