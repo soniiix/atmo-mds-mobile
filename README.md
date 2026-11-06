@@ -1,9 +1,9 @@
 # Confort d'une pièce
 
-Une pièce connectée et simulée : un ESP32 sur Wokwi mesure la température et l'humidité, et une app React Native affiche les mesures, alerte au seuil et pilote une fenêtre et une VMC. Les messages passent par un broker MQTT HiveMQ Cloud.
+Une pièce connectée et simulée : un ESP32 sur Wokwi mesure la température et l'humidité, et une app React Native affiche les mesures, alerte au seuil et pilote une fenêtre et une VMC. Les messages passent par un broker MQTT EMQX Cloud.
 
 ```
-ESP32 (Wokwi)  <--MQTT-->  HiveMQ Cloud  <--MQTT-->  App React Native
+ESP32 (Wokwi)  <--MQTT-->  EMQX Cloud    <--MQTT-->  App React Native
                                 |
                                 +--> Back-end (historique des mesures)
 ```
@@ -14,10 +14,16 @@ ESP32 (Wokwi)  <--MQTT-->  HiveMQ Cloud  <--MQTT-->  App React Native
 | --- | --- | --- | --- |
 | [`mobile/`](mobile/) | App React Native (Expo) | Quentin | Écran d'accueil, valeurs factices |
 | [`firmware/`](firmware/) | Simulation Wokwi de l'ESP32 | Keyrhan | À faire |
-| [`backend/`](backend/) | Historique des mesures | Raphaël | À faire |
-| [`docs/`](docs/) | Contrat MQTT, doc technique, dossier sécu, fiches | Tous | Contrat en brouillon |
+| [`backend/`](backend/) | Historique des mesures (Node.js, SQLite) | Raphaël | Fait, testé avec un broker local |
+| [`broker/`](broker/guide-emqx.md) | Mise en place d'EMQX : comptes, droits par topic, TLS | Raphaël | Guide prêt, compte à créer |
+| [`docs/`](docs/) | Contrat MQTT, [dossier sécu](docs/securite/dossier-securite.md), [fiches](docs/fiches/) | Tous | Contrat v0.2 à valider |
+| [`outils/`](outils/verif-secrets.mjs) | Contrôle des secrets en dur et connexions non chiffrées | Raphaël | `node outils/verif-secrets.mjs` |
 
 Chaque dossier est indépendant, avec sa propre techno et ses propres dépendances. Le lien entre les briques est le [contrat MQTT](docs/contrat-mqtt.md).
+
+## Changement de broker : HiveMQ → EMQX
+
+L'offre gratuite de HiveMQ Cloud (Serverless) n'est plus vendue depuis le 30/09/2026 et s'arrête le 31/12/2026. On passe sur **EMQX Cloud Serverless** (gratuit, TLS, droits par topic). Les topics ne changent pas. Explications : [broker/guide-emqx.md](broker/guide-emqx.md#0-pourquoi-emqx-et-plus-hivemq).
 
 ## Travailler à plusieurs
 
@@ -41,8 +47,9 @@ Scanner ensuite le QR code affiché avec Expo Go. Sur un réseau qui isole les a
 
 ## Règle sur les secrets
 
-Aucun identifiant ne doit être commité ni écrit en dur dans le code : ni mot de passe HiveMQ, ni URL contenant un compte.
+Aucun identifiant ne doit être commité ni écrit en dur dans le code : ni mot de passe du broker, ni URL contenant un compte.
 
-- Seuls les fichiers modèles (`.env.example`, `secrets.example.h`) sont commités. Les vrais `.env` et `secrets.h` sont ignorés par Git.
+- Avant de commiter : `node outils/verif-secrets.mjs` depuis la racine.
+- Seuls les fichiers modèles (`*.example`, `secrets.example.h`) sont commités. Les vrais `.env` et `secrets.h` sont ignorés par Git.
 - Un projet Wokwi partagé par lien montre ses fichiers : le mot de passe de l'objet ne doit pas s'y retrouver.
 - Les variables `EXPO_PUBLIC_*` sont intégrées à l'app : elles conviennent pour l'adresse du broker, pas pour un mot de passe.

@@ -1,0 +1,22 @@
+{
+  "name": "piece-historique",
+  "version": "1.0.0",
+  "description": "Back-end d'historique : s'abonne à piece/mesures sur le broker MQTT et sert l'historique en HTTP",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning --env-file-if-exists=.env src/index.js",
+    "simulateur": "node --env-file-if-exists=.env.outils outils/simulateur.js",
+    "test-droits": "node --env-file-if-exists=.env.outils outils/test-droits.js",
+    "test": "node --disable-warning=ExperimentalWarning --test \"test/*.test.js\""
+  },
+  "dependencies": {
+    "mqtt": "^5.16.1"
+  },
+  "devDependencies": {
+    "aedes": "^1.2.0"
+  }
+}

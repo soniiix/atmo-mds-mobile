@@ -1,11 +1,18 @@
-# Secrets : seuls les fichiers modèles sont commités
+# Secrets : seuls les fichiers modèles (*.example) sont commités
 .env
 .env.*
-!.env.example
+!*.example
 secrets.h
 
-# Dépendances
+# Dépendances et fichiers générés
 node_modules/
+.expo/
+dist/
+build/
+
+# Base de l'historique
+*.db
+*.db-journal
 
 # Système et éditeurs
 .DS_Store
